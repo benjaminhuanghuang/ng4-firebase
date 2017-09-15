@@ -1,3 +1,4 @@
+## Setup
 - Step 1: Create firebase account
 https://firebase.google.com
 
@@ -52,7 +53,7 @@ Read list or object
     this.restaurant = this.fdb.object('/restaurant');
   }
 ```
-```
+
 Template
 ```
 <li *ngFor="let c of cuisines | async">{{c.$value}}</li>
@@ -62,7 +63,7 @@ Template
 
 ## Update
 ```
-  cuisines: FirebaseListObservable<any>;
+  cuisines: FirebaseListObservable<any[]>;
   
   this.cuisines.push({
       name: "Asian",
@@ -76,9 +77,31 @@ Template
     rating: 5
   })
 
-  // Overwrite
+  // Overwrite or create new one
   this.db.object('/restaurant').set({
     name:'new name',
     rating: 5
   })
 ```
+
+## Delete
+```
+  // return a promise
+  this.fdb
+    .object("/restaurant").remove()
+    .then(() => {});
+```
+
+## Join
+```
+  this.cuisines = this.fdb.list("/cuisines");
+  this.restaurants = this.fdb.list("/restaurants").map(restaurants=>{
+    restaurants.map(restaurant=>{
+      // an observable
+      restaurant.cuisineType = this.fdb.object('/cuisines/'+restaurant.cuisine)
+    });
+    return restaurants;  
+  });
+```
+
+

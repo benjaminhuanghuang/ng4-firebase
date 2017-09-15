@@ -3,6 +3,8 @@ import {
   AngularFireDatabase,
   FirebaseListObservable
 } from "angularfire2/database";
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
 
 @Component({
   selector: "app-root",
@@ -12,8 +14,8 @@ import {
 export class AppComponent {
   title = "app";
 
-  cuisines: FirebaseListObservable<any>;
-  restaurant;
+  cuisines: FirebaseListObservable<any[]>;
+  restaurants: Observable<any[]>;
 
   private subscription;
 
@@ -26,7 +28,13 @@ export class AppComponent {
     // });
     // return a observable
     this.cuisines = this.fdb.list("/cuisines");
-    this.restaurant = this.fdb.object("/restaurant");
+    this.restaurants = this.fdb.list("/restaurants").map(restaurants=>{
+      restaurants.map(restaurant=>{
+        // an observable
+        restaurant.cuisineType = this.fdb.object('/cuisines/'+restaurant.cuisine)
+      });
+      return restaurants;  
+    });
   }
 
   // ngOnDestroy()
@@ -41,5 +49,20 @@ export class AppComponent {
         description: "what?"
       }
     });
+  }
+
+  update() {
+    this.fdb.object("/restaurant").set({
+      name: "New name",
+      rating: 5
+    });
+  }
+
+  remove() {
+    // return a promise
+    this.fdb
+      .object("/restaurant")
+      .remove()
+      .then(() => {});
   }
 }
