@@ -4,7 +4,14 @@
 - Angular Cli
   https://cli.angular.io/
   ```
-  npm i -g @angular/cli
+  # if you have the wrong cli version only
+  npm uninstall -g angular-cli
+  npm uninstall -g @angular/cli
+  npm cache clean
+
+  # reinstall clean version
+  npm install -g @angular/cli@latest
+
   ng --version
   ng new my-app  
   or ng new appName --directory ./
