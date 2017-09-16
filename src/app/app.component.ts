@@ -16,9 +16,8 @@ export class AppComponent {
 
   cuisines: FirebaseListObservable<any[]>;
   restaurants: Observable<any[]>;
-
-  private subscription;
-
+  exists;
+  
   constructor(private fdb: AngularFireDatabase) {}
 
   ngOnInit() {
@@ -40,6 +39,16 @@ export class AppComponent {
         }
       });
       return restaurants;
+    });
+
+    // an observable, get value of specify feature
+    this.exists = this.fdb.object('/restaurants/1/features/1');
+
+    this.exists.subscribe(x=>{
+      if(x && x.$value)
+        console.log('Exists');
+      else
+        console.log('Not exists');
     });
   }
 
