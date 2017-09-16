@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
+import { AngularFireAuth } from 'angularfire2/auth';
 import {
   AngularFireDatabase,
   FirebaseListObservable
 } from "angularfire2/database";
 import { Observable } from "rxjs/Observable";
 import "rxjs/add/operator/map";
+import "rxjs/add/operator/take";
 
 @Component({
   selector: "app-root",
@@ -18,7 +20,7 @@ export class AppComponent {
   restaurants: Observable<any[]>;
   exists;
   
-  constructor(private fdb: AngularFireDatabase) {}
+  constructor(private fdb: AngularFireDatabase, private afAuth: AngularFireAuth) {}
 
   ngOnInit() {
     // this.subscription = this.fdb.list("/cuisines").subscribe(x => {
@@ -26,7 +28,12 @@ export class AppComponent {
     //   console.log(this.cuisines);
     // });
     // return a observable
-    this.cuisines = this.fdb.list("/cuisines");
+    this.cuisines = this.fdb.list("/cuisines", {
+      query:{
+        // orderByKey: true
+        orderByValue: true
+      }
+    });
     this.restaurants = this.fdb.list("/restaurants").map(restaurants => {
       restaurants.map(restaurant => {
         // an observable
@@ -44,7 +51,7 @@ export class AppComponent {
     // an observable, get value of specify feature
     this.exists = this.fdb.object('/restaurants/1/features/1');
 
-    this.exists.subscribe(x=>{
+    this.exists.take(1).subscribe(x=>{
       if(x && x.$value)
         console.log('Exists');
       else
@@ -79,5 +86,11 @@ export class AppComponent {
       .object("/restaurant")
       .remove()
       .then(() => {});
+  }
+  login() {
+    this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  }
+  logout() {
+     this.afAuth.auth.signOut();
   }
 }

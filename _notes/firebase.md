@@ -104,4 +104,41 @@ Template
   });
 ```
 
+## Exist
+
+## Sorting
+Firebase can only sort data by one property.
+
+```
+this.cuisines = this.fdb.list("/cuisines", {
+  query:{
+    // orderByKey: true
+    // orderByValue: true
+    // orderByChild: 'name'
+    // orderByChild: 'address/city'
+  }
+});
+```
+
+## Filter
+```
+this.cuisines = this.fdb.list("/cuisines", {
+  query:{
+    equalTo: 5
+    startAt: 3
+    endAt: 4
+  }
+});
+```
+
+## Auth
+- Go to console.firebase.google.com
+- Click Authentication -> Sign-in method
+- Enable Facebook sign-in provider.  
+- Create App ID and App secret at developers.facebook.com
+- Add the auth callback url to facebook
+
+
+
+
 
